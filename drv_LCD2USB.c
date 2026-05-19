@@ -358,6 +358,8 @@ static void drv_L2U_clear(void)
 {
     drv_L2U_command(LCD_BOTH, 0x01);	/* clear display */
     drv_L2U_command(LCD_BOTH, 0x03);	/* return home */
+    drv_L2U_flush();
+    usleep(10000);
 }
 
 static void drv_L2U_write(int row, const int col, const char *data, int len)
@@ -380,6 +382,8 @@ static void drv_L2U_write(int row, const int col, const char *data, int len)
     }
 
     drv_L2U_command(ctrl, 0x80 | pos);
+    drv_L2U_flush();
+    usleep(1000);
 
     while (len--) {
 	drv_L2U_enqueue(LCD_DATA | (ctrl & controllers), *data++);
