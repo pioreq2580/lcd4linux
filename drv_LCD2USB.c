@@ -388,6 +388,21 @@ static void drv_L2U_write(int row, const int col, const char *data, int len)
     drv_L2U_flush();
 }
 
+static int drv_L2U_greet(void)
+{
+    const char brand[] = "Ewellcon";
+    int len = strlen(brand);
+
+    drv_L2U_clear();
+
+    if (DROWS >= 2 && len <= DCOLS) {
+	drv_L2U_write(1, (DCOLS - len) / 2, brand, len);
+	return 1;
+    }
+
+    return 0;
+}
+
 static void drv_L2U_defchar(const int ascii, const unsigned char *matrix)
 {
     int i;
@@ -517,9 +532,7 @@ static int drv_L2U_start(const char *section, const int quiet)
     drv_L2U_clear();		/* clear display */
 
     if (!quiet) {
-	char buffer[40];
-	qprintf(buffer, sizeof(buffer), "%s %dx%d", Name, DCOLS, DROWS);
-	if (drv_generic_text_greet(buffer, "www.harbaum.org/till")) {
+	if (drv_L2U_greet()) {
 	    sleep(3);
 	    drv_L2U_clear();
 	}
@@ -661,7 +674,7 @@ int drv_L2U_quit(const int quiet)
 
     /* say goodbye... */
     if (!quiet) {
-	drv_generic_text_greet("That's all, folks!", NULL);
+	drv_L2U_greet();
     }
 
     debug("closing USB connection");
